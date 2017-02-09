@@ -16,5 +16,21 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="MyTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/txt_content_size</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="AppSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textCursorDrawable">@android:drawable/ic_menu_call</item>
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="searchIcon">@android:drawable/ic_search_category_default</item>
+        <item name="closeIcon">@android:drawable/ic_notification_clear_all</item>
+        <item name="queryHint">@string/search_hint</item>
+        <item name="android:imeActionId">6</item>
+    </style>
 
+    <string name="search_hint">Git repo search</string>
 </resources>
