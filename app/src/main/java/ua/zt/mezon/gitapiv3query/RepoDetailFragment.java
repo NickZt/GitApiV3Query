@@ -6,14 +6,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import ua.zt.mezon.gitapiv3query.model.helper.Constants;
+import ua.zt.mezon.gitapiv3query.presenter.GetPresenter;
 
 /**
  * Created by MezM on 08.02.2017.
  */
 
 public class RepoDetailFragment extends Fragment {
+
+    private GetPresenter mPresenter=GetPresenter.getInstance();
+
+    ProgressBar mLoading;
+
 
     public RepoDetailFragment() {
     }
@@ -29,7 +36,7 @@ public class RepoDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-     View v=  inflater.inflate(R.layout.fragment_main, container, false);
+     View v=  inflater.inflate(R.layout.fragment_detail, container, false);
 
 
 

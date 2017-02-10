@@ -1,39 +1,36 @@
 package ua.zt.mezon.gitapiv3query;
 
-import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import ua.zt.mezon.gitapiv3query.datacontroller.RestManager;
-import ua.zt.mezon.gitapiv3query.model.adapter.FlowerAdapter;
 import ua.zt.mezon.gitapiv3query.presenter.GetPresenter;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final boolean SHOW_DEBUG = true;
     private Animation fab_show;
+
+    private GetPresenter mPresenter=GetPresenter.getInstance();
+
     ProgressBar mLoading;
-    private GetPresenter mPresenter;
+    Toolbar toolbar;
 
 
-    private RecyclerView mRecyclerView;
-    private RestManager mManager;
-    private FlowerAdapter mFlowerAdapter;
 
-    private Button mReload;
-    private ProgressDialog mDialog;
 
 
 
@@ -41,8 +38,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         fab_show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fabedit_show);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        // тип показ
+                                        // turn on designers fantasy
                                         if (SHOW_DEBUG)
                                             Toast.makeText(v.getContext(), "Yep, this all action ", Toast.LENGTH_SHORT)
                                                     .show();
@@ -63,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mLoading= (ProgressBar) findViewById(R.id.progress_bar);
-        mPresenter = new GetPresenter(this);
-        mPresenter.loadRepositories(false);
+        mPresenter.iniGetPresenter(this);
+      //  mPresenter.loadRepositories(false);
     }
 
 
@@ -74,6 +73,48 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+           @Override
+           public boolean onQueryTextSubmit(String query) {
+               if (query != null) {
+                   mPresenter.loadRepositories(query, false);
+               }
+               return false;
+           }
+
+           @Override
+           public boolean onQueryTextChange(String newText) {
+               return false;
+           }
+       });
+//        searchView.setOnSearchClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//        new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                // your text view here
+//                textView.setText(newText);
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                textView.setText(query);
+//                return true;
+//            }
+//        }
+
         return true;
     }
 
@@ -97,5 +138,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onRefreshDone() {
+    }
+
+    public void onRequestFail(String error) {
+        Log.w(TAG, "Error: " + error);
+        Toast.makeText(this, "Error. Please try again!", Toast.LENGTH_SHORT).show();
     }
 }

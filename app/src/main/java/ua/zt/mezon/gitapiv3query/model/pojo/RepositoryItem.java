@@ -22,6 +22,9 @@ public class RepositoryItem implements Parcelable {
     @SerializedName("forks_count")
     private int forksCount;
     private String  description;
+    @SerializedName("subscribers_url")
+    private String  subscribers_url;
+
 
     protected RepositoryItem(Parcel in) {
         name = in.readString();
@@ -31,6 +34,7 @@ public class RepositoryItem implements Parcelable {
         owner = in.readParcelable(Contributor.class.getClassLoader());
         forksCount = in.readInt();
         description = in.readString();
+        subscribers_url = in.readString();
     }
 
     public static final Creator<RepositoryItem> CREATOR = new Creator<RepositoryItem>() {
@@ -44,6 +48,14 @@ public class RepositoryItem implements Parcelable {
             return new RepositoryItem[size];
         }
     };
+
+    public String getSubscribers_url() {
+        return subscribers_url;
+    }
+
+    public void setSubscribers_url(String subscribers_url) {
+        this.subscribers_url = subscribers_url;
+    }
 
     public String getDescription() {
         return description;
@@ -115,5 +127,6 @@ public class RepositoryItem implements Parcelable {
         dest.writeParcelable(owner, flags);
         dest.writeInt(forksCount);
         dest.writeString(description);
+        dest.writeString( subscribers_url );
     }
 }

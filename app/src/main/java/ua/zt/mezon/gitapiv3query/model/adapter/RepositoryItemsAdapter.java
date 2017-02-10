@@ -30,6 +30,8 @@ public class RepositoryItemsAdapter extends RecyclerView.Adapter<RepositoryItems
         mListener = listener;
     }
 
+
+
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.repo_f_item_layout, null, false);
