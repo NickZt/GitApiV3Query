@@ -11,15 +11,33 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+//        jackOptions {
+//            enabled true
+//        }
+//    }
+//
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
+//    compileOptions {
+//        targetCompatibility 1.8
+//        sourceCompatibility 1.8
+//    }
+// Unstable at this moment
+    //        Error:Library writing phase: I/O error when accessing file
+// Then go in old 1.7 way.
+// Sad but true
 }
 
 dependencies {
@@ -35,14 +53,14 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 
-   // compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    // rx may the extra overhead in this case, but add simplicity later
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
-    compile 'com.google.code.gson:gson:2.7'
-
 
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'io.reactivex:rxandroid:1.0.1'
-    // rx may the extra overhead in this case, but add simplicity later
+
+
     // Unit testing dependencies
 
     testCompile 'junit:junit:4.12'

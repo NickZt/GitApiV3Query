@@ -31,7 +31,6 @@ public class RepositoryItemsAdapter extends RecyclerView.Adapter<RepositoryItems
     }
 
 
-
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.repo_f_item_layout, null, false);
@@ -44,10 +43,10 @@ public class RepositoryItemsAdapter extends RecyclerView.Adapter<RepositoryItems
         RepositoryItem currRepositoryItem = mRepositoryItems.get(position);
 
         holder.mName.setText(currRepositoryItem.getName());
-        holder.mForks.setText( currRepositoryItem.getForksCount());
-        holder.mDescription.setText( currRepositoryItem.getForksCount());
+        holder.mForks.setText(Integer.toString(currRepositoryItem.getForksCount()));
+        holder.mDescription.setText(currRepositoryItem.getDescription());
 
-            Picasso.with(holder.itemView.getContext()).load(currRepositoryItem.getOwner().getAvatarUrl()).into(holder.mAva);
+        Picasso.with(holder.itemView.getContext()).load(currRepositoryItem.getOwner().getAvatarUrl()).into(holder.mAva);
 
     }
 
@@ -74,17 +73,24 @@ public class RepositoryItemsAdapter extends RecyclerView.Adapter<RepositoryItems
         notifyDataSetChanged();
     }
 
+    public interface RepositoryItemClickListener {
+
+        void onClick(int position);
+    }
+
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mAva;
-        private TextView mName, mForks,mDescription;
+        private TextView mName,
+                mForks,
+                mDescription;
 
         public Holder(View itemView) {
             super(itemView);
             mAva = (ImageView) itemView.findViewById(R.id.ava);
             mName = (TextView) itemView.findViewById(R.id.repo_name);
-            mForks = (TextView) itemView.findViewById(R.id.forks);
-             mDescription = (TextView) itemView.findViewById(R.id.rdescription);
+            mForks = (TextView) itemView.findViewById(R.id.forks_in_list);
+            mDescription = (TextView) itemView.findViewById(R.id.rdescription_in_list);
             itemView.setOnClickListener(this);
         }
 
@@ -92,10 +98,5 @@ public class RepositoryItemsAdapter extends RecyclerView.Adapter<RepositoryItems
         public void onClick(View v) {
             mListener.onClick(getLayoutPosition());
         }
-    }
-
-    public interface RepositoryItemClickListener {
-
-        void onClick(int position);
     }
 }

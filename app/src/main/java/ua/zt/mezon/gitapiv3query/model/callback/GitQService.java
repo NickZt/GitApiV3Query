@@ -1,5 +1,6 @@
 package ua.zt.mezon.gitapiv3query.model.callback;
 
+import io.reactivex.Observable;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -13,7 +14,7 @@ public interface GitQService   {
 //@FormUrlEncoded
    // @GET(Constants.SEARCH_REP)
 @GET("search/repositories")
-rx.Observable<Response<GithubData>> getQveryRepositiories(@Query("q") String query,
-                                                          @Query("sort") String sortBy,
-                                                          @Query("order") String orderBy);
+Observable<Response<GithubData>> getQveryRepositiories(@Query("q") String query,
+                                                       @Query("sort") String sortBy,
+                                                       @Query("order") String orderBy);
 }
