@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         });
         mLoading= (ProgressBar) findViewById(R.id.progress_bar);
         mPresenter.iniGetPresenter(this);
-      //  mPresenter.loadRepositories(false);
+
     }
 
 
