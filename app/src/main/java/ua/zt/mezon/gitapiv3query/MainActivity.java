@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Fab in action", Snackbar.LENGTH_LONG)
-                        .setAction("Wanna see all POI? ",
+                        .setAction("Wanna turn on designers fantasy?",
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

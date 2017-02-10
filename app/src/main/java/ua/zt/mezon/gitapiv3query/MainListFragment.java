@@ -8,9 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
-import ua.zt.mezon.gitapiv3query.datacontroller.RestManager;
 import ua.zt.mezon.gitapiv3query.presenter.GetPresenter;
 
 /**
@@ -21,9 +19,9 @@ public class MainListFragment extends Fragment {
     private static final String EXTRAS_LIST = "repo_list";
     SwipeRefreshLayout mSwipeRefreshLayout;
     //RepositoryItemsAdapter mAdapter;
-    ProgressBar mLoading;
+ //   ProgressBar mLoading;
     private RecyclerView mRecyclerView;
-    private RestManager mManager;
+
     private GetPresenter mGetPresenter;
 
 

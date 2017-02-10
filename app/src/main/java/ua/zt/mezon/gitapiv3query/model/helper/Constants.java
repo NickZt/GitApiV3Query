@@ -5,6 +5,6 @@ package ua.zt.mezon.gitapiv3query.model.helper;
  */
 public class Constants {
     public static final String BASE_URL = "https://api.github.com";
-    public static final String SEARCH_REP = "repositories";
+    public static final String SEARCH_REP = "search/repositories";
     public static final String ARG_REPO_ID = "repo_id";
 }

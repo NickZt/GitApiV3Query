@@ -12,6 +12,14 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    allprojects {
+        tasks.withType(JavaCompile) {
+            sourceCompatibility = "1.7"
+            targetCompatibility = "1.7"
+        }
+    }
+
 //        jackOptions {
 //            enabled true
 //        }
@@ -61,19 +69,49 @@ dependencies {
 
 
     // Unit testing dependencies
-
+//  Multiple dex files define Landroid/support/test/BuildConfig;
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
-    })
-
-    androidTestCompile 'com.android.support:support-annotations:25.1.1'
-
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'javax.inject'
+        exclude group: 'com.google.code.findbugs'
         exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'support-v4'
+        exclude module: 'design'
+        exclude module: 'recyclerview-v7'
     })
+//
+    androidTestCompile ('com.android.support:support-annotations:25.1.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'javax.inject'
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'support-v4'
+        exclude module: 'design'
+        exclude module: 'recyclerview-v7'
+    })
+
+    androidTestCompile ('com.android.support.test:runner:0.5', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'javax.inject'
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'support-v4'
+        exclude module: 'design'
+        exclude module: 'recyclerview-v7'
+    })
+
+
+    androidTestCompile ('com.android.support.test:rules:0.5', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'javax.inject'
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'support-v4'
+        exclude module: 'design'
+        exclude module: 'recyclerview-v7'
+    })
+
     androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2') {
         exclude module: 'support-annotations'
         exclude module: 'support-v4'
