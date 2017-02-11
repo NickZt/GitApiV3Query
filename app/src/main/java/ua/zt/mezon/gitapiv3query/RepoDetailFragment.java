@@ -54,12 +54,14 @@ public class RepoDetailFragment extends Fragment {
         ivDetail_ava = (ImageView) v.findViewById(R.id.detail_ava);
         twDetail_name = (TextView) v.findViewById(R.id.detail_name);
         twDetail_subscribers_count = (TextView) v.findViewById(R.id.detail_subscribers_count);
-
-
+       // mGetPresenter.
+        setIternalfields(mGetPresenter.getmRepoDetailFragment_urlto(),
+                mGetPresenter.getmRepoDetailFragment_detail_name(),
+                mGetPresenter.getmRepoDetailFragment_subscribers_count());
         return v;
     }
 
-    public void setIternalfields(String url, String detail_name, int subscribers_count) {
+    private void setIternalfields(String url, String detail_name, int subscribers_count) {
 
 
         Picasso.with(v.getContext()).load(url).into(ivDetail_ava);

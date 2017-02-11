@@ -41,6 +41,23 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
     private RepositoryDetailGitItemsAdapter mRepoDetailsAdapter = new RepositoryDetailGitItemsAdapter();
     private CompositeDisposable mCompositeDisposable,mCompositeDisposable2;
 
+    private String mRepoDetailFragment_urlto;
+    private String mRepoDetailFragment_detail_name;
+    private int mRepoDetailFragment_subscribers_count;
+
+    public String getmRepoDetailFragment_urlto() {
+        return mRepoDetailFragment_urlto;
+    }
+
+    public int getmRepoDetailFragment_subscribers_count() {
+        return mRepoDetailFragment_subscribers_count;
+    }
+
+
+    public String getmRepoDetailFragment_detail_name() {
+        return mRepoDetailFragment_detail_name;
+    }
+
     private GetPresenter() {
     }
 
@@ -128,7 +145,7 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
     public void onClick(int position) {
 // todo:  prepare data for  extended repo screen adapter
 
-        loadRepoDetails(mRepositoryItemsAdapter.getSelectedRepositoryItem(position).getSubscribers_url(), false);
+        loadRepoDetails(mRepositoryItemsAdapter.getSelectedRepositoryItem(position), false);
 
     }
 
@@ -141,7 +158,7 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
         return mRepoDetailsAdapter;
     }
 
-    public void loadRepoDetails(String url, final boolean isRefresh) {
+    public void loadRepoDetails(final RepositoryItem repositoryItem, final boolean isRefresh) {
         if (!isRefresh)
             mView.showProgress(true);
 
@@ -162,15 +179,22 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                         for (GitSubscriber ritem : tGitSubscriberList) {
                             mRepoDetailsAdapter.addGitSubscriberItem(ritem);
                         }
+                        mRepoDetailFragment_urlto=repositoryItem.getOwner().getAvatarUrl();
+                        mRepoDetailFragment_detail_name=repositoryItem.getName();
+                        mRepoDetailFragment_subscribers_count=tGitSubscriberList.size();
 
                         FragmentTransaction f = mView.getSupportFragmentManager().beginTransaction();
-                        RepoDetailFragment gitDetailFragment = new RepoDetailFragment();
-
-                        f.add(R.id.fragment, gitDetailFragment);
-                        // the fragment_container FrameLayout
-                        if (mView.findViewById(R.id.detail_container) != null) {
-                            f.add(R.id.detail_container, new RepoDetailFragment());
+                        if ( mRepoDetailFragment== null) {
+                            mRepoDetailFragment= new RepoDetailFragment();
                         }
+
+
+
+                        // the fragment_container FrameLayout
+//                        if (mView.findViewById(R.id.detail_container) != null) {
+//                            f.add(R.id.detail_container, mRepoDetailFragment);
+//                        } else
+                            f.add(R.id.fragment, mRepoDetailFragment);
                         f.commit();
 
 
@@ -179,17 +203,17 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
 
 
                 } else {
-//                    int sc = response.code();
-//                    switch (sc) {
-//                        case 400:
-//                            Log.e("Error 400", "Bad Request");
-//                            break;
-//                        case 404:
-//                            Log.e("Error 404", "Not Found");
-//                            break;
-//                        default:
-//                            Log.e("Error", "Generic Error");
-//                    }
+                    int sc = response.code();
+                    switch (sc) {
+                        case 400:
+                            Log.e("Error 400", "Bad Request");
+                            break;
+                        case 404:
+                            Log.e("Error 404", "Not Found");
+                            break;
+                        default:
+                            Log.e("Error", "Generic Error");
+                    }
                 }
 
 
@@ -203,7 +227,7 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
             }
         };
 
-        mCompositeDisposable2.add(mApi.getQverySubscribers(url)
+        mCompositeDisposable2.add(mApi.getQverySubscribers(repositoryItem.getSubscribers_url())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe( handleResponse, handleError));
