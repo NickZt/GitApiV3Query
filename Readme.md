@@ -23,4 +23,4 @@ The list of subscribers
    
 Written in MVC style, with some visual sugar, as a  flexible user interface and fragment transition and animation.
 
-Without Butter.
+Without cholesterole and Butter.
