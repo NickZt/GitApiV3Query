@@ -1,5 +1,6 @@
 package ua.zt.mezon.gitapiv3query.presenter;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
@@ -28,6 +29,7 @@ import ua.zt.mezon.gitapiv3query.model.pojo.RepositoryItem;
  */
 public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickListener {
 
+
     private static MainListFragment mMainListFragment;
     private static RepoDetailFragment mRepoDetailFragment;
 
@@ -41,22 +43,12 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
     private RepositoryDetailGitItemsAdapter mRepoDetailsAdapter = new RepositoryDetailGitItemsAdapter();
     private CompositeDisposable mCompositeDisposable,mCompositeDisposable2;
 
-    private String mRepoDetailFragment_urlto;
-    private String mRepoDetailFragment_detail_name;
-    private int mRepoDetailFragment_subscribers_count;
-
-    public String getmRepoDetailFragment_urlto() {
-        return mRepoDetailFragment_urlto;
-    }
-
-    public int getmRepoDetailFragment_subscribers_count() {
-        return mRepoDetailFragment_subscribers_count;
+    public static MainListFragment getmMainListFragment() {
+        return mMainListFragment;
     }
 
 
-    public String getmRepoDetailFragment_detail_name() {
-        return mRepoDetailFragment_detail_name;
-    }
+
 
     private GetPresenter() {
     }
@@ -86,14 +78,34 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
         if (!isRefresh)
             mView.showProgress(true);
         this.mQuestion = query;
-
-//        mCompositeDisposable.add(mApi.getQveryRepositiories(query, "", "")
+// I mean some 1.8 sugar set code look better. Like this
+//   mCompositeDisposable.add(mApi.getQveryRepositiories(query, "", "")
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribeOn(Schedulers.io())
 //                .subscribe(this::handleResponse,this::handleError));
-//        Error:Library writing phase: I/O error when accessing file
-// Then go in old 1.7 way.
+
+////  private void handleResponse(ArrayList<RepositoryItem> intRepositoryItemList) {
+//        ArrayList<RepositoryItem> tRepositoryItemList
+//        ArrayList<RepositoryItem> tRepositoryItemList = new ArrayList<>(intRepositoryItemList);
+//        mRepositoryItemsAdapter.reset();
+//        if (tRepositoryItemList.size() > 0) {
+//            for (RepositoryItem ritem : tRepositoryItemList) {//expand from lambda readability only
+//                mRepositoryItemsAdapter.addRepositoryItem(ritem);
+//            }
+//
+//        }
+//
+//    private void handleError(Throwable error) {
+//        mView.onRequestFail(e.toString()+error.getLocalizedMessage());
+//
+// After compiling i got error
+// //        Error:Library writing phase: I/O error when accessing file
+// // Then go in old 1.7 way.
 // Sad but true
+//
+
+
+
 
         Consumer<? super Response<GithubData>> handleResponse = new Consumer<Response<GithubData>>() {
             @Override
@@ -101,12 +113,19 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                 if (response.isSuccessful()) {
                     ArrayList<RepositoryItem> tRepositoryItemList = response.body().getItems();
                     mRepositoryItemsAdapter.reset();
+
+                    if (  mRepoDetailsAdapter!= null) {
+                        mRepoDetailsAdapter.reset();
+                    }
+
                     if (tRepositoryItemList.size() > 0) {
                         for (RepositoryItem ritem : tRepositoryItemList) {
                             mRepositoryItemsAdapter.addRepositoryItem(ritem);
                         }
                     }
 
+
+                    showMainListFragment();
 
                 } else {
                     int sc = response.code();
@@ -121,6 +140,8 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                             Log.e("Error", "Generic Error");
                     }
                 }
+
+
 
 
             }
@@ -174,29 +195,16 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
             public void accept(Response<List<GitSubscriber>> response) throws Exception {
                 if (response.isSuccessful()) { //response.isSuccessful()
                     ArrayList<GitSubscriber> tGitSubscriberList = (ArrayList<GitSubscriber>) response.body(); //response.body();
-                    mRepositoryItemsAdapter.reset();
+                    mRepoDetailsAdapter.reset();
                     if (tGitSubscriberList.size() > 0) {
                         for (GitSubscriber ritem : tGitSubscriberList) {
                             mRepoDetailsAdapter.addGitSubscriberItem(ritem);
                         }
-                        mRepoDetailFragment_urlto=repositoryItem.getOwner().getAvatarUrl();
-                        mRepoDetailFragment_detail_name=repositoryItem.getName();
-                        mRepoDetailFragment_subscribers_count=tGitSubscriberList.size();
-
-                        FragmentTransaction f = mView.getSupportFragmentManager().beginTransaction();
-                        if ( mRepoDetailFragment== null) {
-                            mRepoDetailFragment= new RepoDetailFragment();
-                        }
+                        mRepoDetailsAdapter.setmRepoDetailFragment_urlto( repositoryItem.getOwner().getAvatarUrl());
+                        mRepoDetailsAdapter.setmRepoDetailFragment_detail_name( repositoryItem.getName());
 
 
-
-                        // the fragment_container FrameLayout
-//                        if (mView.findViewById(R.id.detail_container) != null) {
-//                            f.add(R.id.detail_container, mRepoDetailFragment);
-//                        } else
-                            f.add(R.id.fragment, mRepoDetailFragment);
-                        f.commit();
-
+                        showRepodetailFragment();
 
 
                     }
@@ -234,35 +242,88 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
 
     }
 
+    public void showMainListFragment() {
+
+        FragmentManager fManager = mView.getSupportFragmentManager();
+        if ( mMainListFragment== null) {
+            mMainListFragment= new MainListFragment();
+        }
+//        remove/create fragment mMainListFragment = (MainListFragment) fManager.findFragmentById(mMainListFragment.getId());
+
+        if (fManager.findFragmentById(mMainListFragment.getId()) != null) {
+            fManager.beginTransaction().remove(mMainListFragment).commit();
+            fManager.executePendingTransactions();
+        } else {
+
+            if ( mMainListFragment== null) {
+                mMainListFragment= new MainListFragment();
+            }
+
+        }
+
+        FragmentTransaction f = fManager.beginTransaction();
+
+        //        set animator
+        f.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        //                    f.setCustomAnimations( R.anim.slide_in_left, 0, 0, R.anim.slide_out_left);
+
+        if ((mView.findViewById(R.id.detail_container) != null)) {
+// Two Panel mode
+            f.replace(R.id.container, mMainListFragment)
+
+                    .commit();
+        } else {
+// One Panel mode
+            f.replace(R.id.container, mMainListFragment)
+
+                    .commit();
+        }
+
+    }
+
+    public void showRepodetailFragment() {
+
+        FragmentManager fManager = mView.getSupportFragmentManager();
+
+        if (  mRepoDetailFragment== null) {
+            mRepoDetailFragment= new RepoDetailFragment();
+        }
 
 
+//        remove/create fragment
+        if (fManager.findFragmentById( mRepoDetailFragment.getId()) != null) {
+            fManager.beginTransaction().remove( mRepoDetailFragment).commit();
+            fManager.executePendingTransactions();
+        } else {
 
+            if (  mRepoDetailFragment== null) {
+                 mRepoDetailFragment= new RepoDetailFragment();
+            }
+
+        }
+
+        FragmentTransaction f = fManager.beginTransaction();
+
+        //        set animator
+        f.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        //                    f.setCustomAnimations( R.anim.slide_in_left, 0, 0, R.anim.slide_out_left);
+
+        if ((mView.findViewById(R.id.detail_container) != null)) {
+// Two Panel mode
+            f.replace(R.id.detail_container,  mRepoDetailFragment)
+
+                    .commit();
+        } else {
+// One Panel mode
+            f.replace(R.id.container,  mRepoDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+
+
+    }
 
 
 }
 
 
-/*
-//        Error:Library writing phase: I/O error when accessing file
-// Then go in old 1.7 way.
-// Sad but true
-
-
-    private void handleResponse(ArrayList<RepositoryItem> intRepositoryItemList) {
-ArrayList<RepositoryItem> tRepositoryItemList
-        ArrayList<RepositoryItem> tRepositoryItemList = new ArrayList<>(intRepositoryItemList);
-        mRepositoryItemsAdapter.reset();
-        if (tRepositoryItemList.size() > 0) {
-                                for (RepositoryItem ritem : tRepositoryItemList) {//expand from lambda readability only
-                                    mRepositoryItemsAdapter.addRepositoryItem(ritem);
-                                }
-
-    }
-
-    private void handleError(Throwable error) {
-mView.onRequestFail(e.toString()+error.getLocalizedMessage());
-
-    }
-
-
-}*/

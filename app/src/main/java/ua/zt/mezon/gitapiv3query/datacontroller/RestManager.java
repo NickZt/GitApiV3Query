@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ua.zt.mezon.gitapiv3query.model.callback.GitQService;
 
-import static ua.zt.mezon.gitapiv3query.model.helper.Constants.BASE_URL;
+import static ua.zt.mezon.gitapiv3query.model.callback.Constants.BASE_URL;
 
 /**
  * Created by MezM on 08.02.2017.

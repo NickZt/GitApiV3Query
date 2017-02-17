@@ -2,6 +2,7 @@ package ua.zt.mezon.gitapiv3query;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressBar mLoading;
     Toolbar toolbar;
-
 
 
 
@@ -63,11 +63,24 @@ public class MainActivity extends AppCompatActivity {
         });
         mLoading= (ProgressBar) findViewById(R.id.progress_bar);
         mPresenter.iniGetPresenter(this);
-
+        mPresenter.showMainListFragment();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mPresenter.showMainListFragment();
+        mPresenter.showRepodetailFragment();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,26 +107,6 @@ public class MainActivity extends AppCompatActivity {
                return false;
            }
        });
-//        searchView.setOnSearchClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//        new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                // your text view here
-//                textView.setText(newText);
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                textView.setText(query);
-//                return true;
-//            }
-//        }
 
         return true;
     }

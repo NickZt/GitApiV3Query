@@ -7,7 +7,6 @@ import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
-import ua.zt.mezon.gitapiv3query.model.helper.Constants;
 import ua.zt.mezon.gitapiv3query.model.pojo.GitSubscriber;
 import ua.zt.mezon.gitapiv3query.model.pojo.GithubData;
 

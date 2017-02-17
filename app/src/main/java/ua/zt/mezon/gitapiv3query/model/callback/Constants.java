@@ -1,4 +1,4 @@
-package ua.zt.mezon.gitapiv3query.model.helper;
+package ua.zt.mezon.gitapiv3query.model.callback;
 
 /**
  * Created by MezM on 08.02.2017.

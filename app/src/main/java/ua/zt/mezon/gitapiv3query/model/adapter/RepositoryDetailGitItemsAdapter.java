@@ -26,11 +26,38 @@ public class RepositoryDetailGitItemsAdapter extends RecyclerView.Adapter<Reposi
 
     private List<GitSubscriber> mGitSubscribers;
 
+
+
+
+    private String mRepoDetailFragment_urlto="";
+    private String mRepoDetailFragment_detail_name="";
+    private int mRepoDetailFragment_subscribers_count=0;
+
+
+    public void setmRepoDetailFragment_urlto(String mRepoDetailFragment_urlto) {
+        this.mRepoDetailFragment_urlto = mRepoDetailFragment_urlto;
+    }
+
     public RepositoryDetailGitItemsAdapter() {
         mGitSubscribers = new ArrayList<>();
 
     }
+    public void setmRepoDetailFragment_detail_name(String mRepoDetailFragment_detail_name) {
+        this.mRepoDetailFragment_detail_name = mRepoDetailFragment_detail_name;
+    }
 
+    public String getmRepoDetailFragment_urlto() {
+        return mRepoDetailFragment_urlto;
+    }
+
+    public int getmRepoDetailFragment_subscribers_count() {
+        return mRepoDetailFragment_subscribers_count;
+    }
+
+
+    public String getmRepoDetailFragment_detail_name() {
+        return mRepoDetailFragment_detail_name;
+    }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -58,6 +85,7 @@ public class RepositoryDetailGitItemsAdapter extends RecyclerView.Adapter<Reposi
 
     public void addGitSubscriberItem(GitSubscriber repoi) {
         mGitSubscribers.add(repoi);
+        mRepoDetailFragment_subscribers_count=mGitSubscribers.size();
         notifyDataSetChanged();
     }
 
@@ -71,6 +99,9 @@ public class RepositoryDetailGitItemsAdapter extends RecyclerView.Adapter<Reposi
 
     public void reset() {
         mGitSubscribers.clear();
+        mRepoDetailFragment_urlto="";
+        mRepoDetailFragment_detail_name="";
+        mRepoDetailFragment_subscribers_count=0;
         notifyDataSetChanged();
     }
 
