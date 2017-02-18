@@ -1,10 +1,10 @@
-It is an example creation of the client to API REST on the example of GITHUB REST V3. In the example Starred: Retrofit2, RxJava 2 and Picasso
+It is an example creation of the client to REST API on the example of GITHUB V3 REST API. In this example starred: Retrofit2, RxJava 2 and Picasso. Without cholesterole and Butter.
 
 For more information on the GitHub API see https://developer.github.com/v3
 
-With use of Retrofit 2 - Retrofit:2.1.0
+With use of Retrofit 2 ver  Retrofit:2.1.0
 
-   With use of RxJava 2 - rxjava:2.0.1
+ With use of RxJava 2  ver- rxjava:2.0.1
 
 This app  queries a web service and displays the results.
  Query the web service: GET https://api.github.com/search/repositories?q=:query (replace :query accordingly)
