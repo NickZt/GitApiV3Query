@@ -23,16 +23,10 @@ import ua.zt.mezon.gitapiv3query.presenter.GetPresenter;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final boolean SHOW_DEBUG = true;
-    private Animation fab_show;
-
-    private GetPresenter mPresenter=GetPresenter.getInstance();
-
     ProgressBar mLoading;
     Toolbar toolbar;
-
-
-
-
+    private Animation fab_show;
+    private GetPresenter mPresenter = GetPresenter.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +55,14 @@ public class MainActivity extends AppCompatActivity {
                                 }).show();
             }
         });
-        mLoading= (ProgressBar) findViewById(R.id.progress_bar);
+        mLoading = (ProgressBar) findViewById(R.id.progress_bar);
         mPresenter.iniGetPresenter(this);
         mPresenter.showMainListFragment();
     }
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();
@@ -93,20 +87,20 @@ public class MainActivity extends AppCompatActivity {
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-           @Override
-           public boolean onQueryTextSubmit(String query) {
-               if (query != null) {
-                   mPresenter.loadRepositories(query, false);
-               }
-               return false;
-           }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query != null) {
+                    mPresenter.loadRepositories(query, false);
+                }
+                return false;
+            }
 
-           @Override
-           public boolean onQueryTextChange(String newText) {
-               return false;
-           }
-       });
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         return true;
     }
@@ -128,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showProgress(boolean isShow) {
         mLoading.setVisibility(isShow ? View.VISIBLE : View.GONE);
+
     }
 
     public void onRefreshDone() {

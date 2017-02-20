@@ -1,5 +1,6 @@
 package ua.zt.mezon.gitapiv3query.presenter;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -30,8 +31,9 @@ import ua.zt.mezon.gitapiv3query.model.pojo.RepositoryItem;
 public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickListener {
 
 
+    private static final boolean DEBUGON = true;
     private static MainListFragment mMainListFragment;
-    private static RepoDetailFragment mRepoDetailFragment;
+    private static Fragment mRepoDetailFragment;
 
     private static GetPresenter ourInstance = new GetPresenter();
 
@@ -41,16 +43,13 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
     private String mQuestion = "Best Android repo ";
     private RepositoryItemsAdapter mRepositoryItemsAdapter = new RepositoryItemsAdapter(this);
     private RepositoryDetailGitItemsAdapter mRepoDetailsAdapter = new RepositoryDetailGitItemsAdapter();
-    private CompositeDisposable mCompositeDisposable,mCompositeDisposable2;
+    private CompositeDisposable mCompositeDisposable, mCompositeDisposable2;
+
+    private GetPresenter() {
+    }
 
     public static MainListFragment getmMainListFragment() {
         return mMainListFragment;
-    }
-
-
-
-
-    private GetPresenter() {
     }
 
     public static GetPresenter getInstance() {
@@ -59,6 +58,11 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
 
     public static GetPresenter GetPresenterInstanceMainFragment(MainListFragment mlf) {
         mMainListFragment = mlf;
+        return ourInstance;
+    }
+
+    public static GetPresenter GetPresenterInstanceRepoDetailFragment(RepoDetailFragment repoDetailFragment) {
+        mRepoDetailFragment = repoDetailFragment;
         return ourInstance;
     }
 
@@ -71,12 +75,11 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
         mApi = mManager.getGitQService();
         mCompositeDisposable = new CompositeDisposable();
         mCompositeDisposable2 = new CompositeDisposable();
-//        return ourInstance;
     }
 
     public void loadRepositories(String query, final boolean isRefresh) {
-        if (!isRefresh)
-            mView.showProgress(true);
+//        if (!isRefresh)
+        mView.showProgress(true);
         this.mQuestion = query;
 // I mean some 1.8 sugar set code look better. Like this
 //   mCompositeDisposable.add(mApi.getQveryRepositiories(query, "", "")
@@ -105,8 +108,6 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
 //
 
 
-
-
         Consumer<? super Response<GithubData>> handleResponse = new Consumer<Response<GithubData>>() {
             @Override
             public void accept(Response<GithubData> response) throws Exception {
@@ -114,7 +115,7 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                     ArrayList<RepositoryItem> tRepositoryItemList = response.body().getItems();
                     mRepositoryItemsAdapter.reset();
 
-                    if (  mRepoDetailsAdapter!= null) {
+                    if (mRepoDetailsAdapter != null) {
                         mRepoDetailsAdapter.reset();
                     }
 
@@ -124,7 +125,8 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                         }
                     }
 
-
+//                    if (!isRefresh)
+                    mView.showProgress(false);
                     showMainListFragment();
 
                 } else {
@@ -140,8 +142,6 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                             Log.e("Error", "Generic Error");
                     }
                 }
-
-
 
 
             }
@@ -161,34 +161,23 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
 
     }
 
-
     @Override
     public void onClick(int position) {
 // todo:  prepare data for  extended repo screen adapter
 
-        loadRepoDetails(mRepositoryItemsAdapter.getSelectedRepositoryItem(position), false);
+        loadRepoDetails(mRepositoryItemsAdapter.getSelectedRepositoryItem(position));
 
-    }
-
-    public static GetPresenter GetPresenterInstanceRepoDetailFragment(RepoDetailFragment repoDetailFragment) {
-        mRepoDetailFragment = repoDetailFragment;
-        return ourInstance;
     }
 
     public RepositoryDetailGitItemsAdapter getmRepoDetailsAdapter() {
         return mRepoDetailsAdapter;
     }
 
-    public void loadRepoDetails(final RepositoryItem repositoryItem, final boolean isRefresh) {
-        if (!isRefresh)
-            mView.showProgress(true);
+    public void loadRepoDetails(final RepositoryItem repositoryItem) {
+        mView.showProgress(true);
 
 
-
-
-
-        Consumer<? super Response<List<GitSubscriber>>>handleResponse = new Consumer<Response<List<GitSubscriber>>>() {
-
+        Consumer<? super Response<List<GitSubscriber>>> handleResponse = new Consumer<Response<List<GitSubscriber>>>() {
 
 
             @Override
@@ -200,9 +189,9 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
                         for (GitSubscriber ritem : tGitSubscriberList) {
                             mRepoDetailsAdapter.addGitSubscriberItem(ritem);
                         }
-                        mRepoDetailsAdapter.setmRepoDetailFragment_urlto( repositoryItem.getOwner().getAvatarUrl());
-                        mRepoDetailsAdapter.setmRepoDetailFragment_detail_name( repositoryItem.getName());
-
+                        mRepoDetailsAdapter.setmRepoDetailFragment_urlto(repositoryItem.getOwner().getAvatarUrl());
+                        mRepoDetailsAdapter.setmRepoDetailFragment_detail_name(repositoryItem.getName());
+                        mView.showProgress(false);
 
                         showRepodetailFragment();
 
@@ -238,25 +227,24 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
         mCompositeDisposable2.add(mApi.getQverySubscribers(repositoryItem.getSubscribers_url())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe( handleResponse, handleError));
+                .subscribe(handleResponse, handleError));
 
     }
 
     public void showMainListFragment() {
 
         FragmentManager fManager = mView.getSupportFragmentManager();
-        if ( mMainListFragment== null) {
-            mMainListFragment= new MainListFragment();
+        if (mMainListFragment == null) {
+            mMainListFragment = new MainListFragment();
         }
-//        remove/create fragment mMainListFragment = (MainListFragment) fManager.findFragmentById(mMainListFragment.getId());
 
         if (fManager.findFragmentById(mMainListFragment.getId()) != null) {
             fManager.beginTransaction().remove(mMainListFragment).commit();
             fManager.executePendingTransactions();
         } else {
 
-            if ( mMainListFragment== null) {
-                mMainListFragment= new MainListFragment();
+            if (mMainListFragment == null) {
+                mMainListFragment = new MainListFragment();
             }
 
         }
@@ -264,8 +252,8 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
         FragmentTransaction f = fManager.beginTransaction();
 
         //        set animator
-        f.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        //                    f.setCustomAnimations( R.anim.slide_in_left, 0, 0, R.anim.slide_out_left);
+//        f.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        f.setCustomAnimations(R.anim.slide_in_left, 0, 0, R.anim.slide_out_left);
 
         if ((mView.findViewById(R.id.detail_container) != null)) {
 // Two Panel mode
@@ -285,19 +273,20 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
 
         FragmentManager fManager = mView.getSupportFragmentManager();
 
-        if (  mRepoDetailFragment== null) {
-            mRepoDetailFragment= new RepoDetailFragment();
+        if (mRepoDetailFragment == null) {
+            mRepoDetailFragment = new RepoDetailFragment();
         }
 
 
 //        remove/create fragment
-        if (fManager.findFragmentById( mRepoDetailFragment.getId()) != null) {
-            fManager.beginTransaction().remove( mRepoDetailFragment).commit();
-            fManager.executePendingTransactions();
-        } else {
+        if (fManager.findFragmentById(mRepoDetailFragment.getId()) != null) {
+            fManager.beginTransaction().remove(mRepoDetailFragment).commit();
 
-            if (  mRepoDetailFragment== null) {
-                 mRepoDetailFragment= new RepoDetailFragment();
+            fManager.executePendingTransactions();
+
+        } else {
+            if (mRepoDetailFragment == null) {
+                mRepoDetailFragment = new RepoDetailFragment();
             }
 
         }
@@ -305,17 +294,27 @@ public class GetPresenter implements RepositoryItemsAdapter.RepositoryItemClickL
         FragmentTransaction f = fManager.beginTransaction();
 
         //        set animator
-        f.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        //                    f.setCustomAnimations( R.anim.slide_in_left, 0, 0, R.anim.slide_out_left);
+//        f.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        f.setCustomAnimations(R.anim.slide_in_left, 0, 0, R.anim.slide_out_left);
 
         if ((mView.findViewById(R.id.detail_container) != null)) {
 // Two Panel mode
-            f.replace(R.id.detail_container,  mRepoDetailFragment)
+//            if (DEBUGON) Log.d(TAG, "showRepodetailFragment()  Two Panel mode" );
 
-                    .commit();
+
+            if (fManager.findFragmentById(R.id.detail_container) == null) {
+                f.add(R.id.detail_container, mRepoDetailFragment);
+//                d(TAG, "showRepodetailFragment() (f.add(R.id.detail_container, " );
+            } else {
+                f.replace(R.id.detail_container, mRepoDetailFragment);
+//                d(TAG, "showRepodetailFragment() replace(R.id.detail_container " );
+            }
+            f.commit();
+
+
         } else {
 // One Panel mode
-            f.replace(R.id.container,  mRepoDetailFragment)
+            f.replace(R.id.container, mRepoDetailFragment)
                     .addToBackStack(null)
                     .commit();
         }

@@ -37,9 +37,7 @@ public class RepoDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments().containsKey(Constants.ARG_REPO_ID)) {
-//
-//        }
+
     }
 
     @Override
